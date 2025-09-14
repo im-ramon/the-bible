@@ -1,13 +1,9 @@
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { search } from '@/services/db';
 import { SearchResult } from '@/types/types';
 import { useNavigation } from '@react-navigation/native';
-
-const navigateToVerse = (navigation: any, item: SearchResult) => {
-    navigation.navigate('Verses', { bookId: item.book_id, chapter: item.chapter, bookName: item.book_name });
-};
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SearchScreen() {
     const [query, setQuery] = useState('');
@@ -21,6 +17,10 @@ export default function SearchScreen() {
         }
         const searchResults = await search(query);
         setResults(searchResults);
+    };
+
+    const navigateToVerse = (navigation: any, item: SearchResult) => {
+        navigation.navigate('Verses', { bookId: item.book_id, chapter: item.chapter, bookName: item.book_name });
     };
 
     return (

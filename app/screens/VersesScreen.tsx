@@ -5,7 +5,6 @@ import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 
-
 export default function VersesScreen() {
     const [verses, setVerses] = useState<Verse[]>([]);
     const route = useRoute();

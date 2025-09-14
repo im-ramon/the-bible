@@ -3,11 +3,10 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
     MD3LightTheme as DefaultThemeNativePaper,
-    PaperProvider,
-    Text,
+    PaperProvider
 } from 'react-native-paper';
 import 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export const unstable_settings = {
     anchor: '(tabs)',
@@ -17,7 +16,7 @@ const theme = {
     ...DefaultThemeNativePaper,
     colors: {
         ...DefaultThemeNativePaper.colors,
-        primary: 'tomato',
+        primary: 'red',
         secondary: 'yellow',
     },
     roundness: 2,
@@ -35,12 +34,13 @@ export default function RootLayout() {
     return (
         <ThemeProvider value={DefaultTheme}>
             <PaperProvider theme={theme}>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <Stack>
-                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    </Stack>
-                    <Text style={{ color: 'black'}} >aaaaaaaaa</Text>
-                </SafeAreaView>
+                <SafeAreaProvider>
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <Stack>
+                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        </Stack>
+                    </SafeAreaView>
+                </SafeAreaProvider>
             </PaperProvider>
             <StatusBar style="dark" />
         </ThemeProvider >

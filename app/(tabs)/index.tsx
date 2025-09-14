@@ -1,29 +1,167 @@
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BooksScreen from '../screens/BooksScreen';
-import ChaptersScreen from '../screens/ChaptersScreen';
-import VersesScreen from '../screens/VersesScreen';
+import { daylyVerse, queryVerse } from '@/assets/db/daylyVerse';
+import { THEME } from '@/styles/styles';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { Bookmark, BookMarked, Search } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
-const Stack = createNativeStackNavigator();
+export default function Index() {
+    const router = useRouter();
 
-export default function BibleStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen 
-        name="Books" 
-        component={BooksScreen} 
-        options={{ title: 'Bíblia ACF' }} 
-      />
-      <Stack.Screen 
-        name="Chapters" 
-        component={ChaptersScreen} 
-        options={({ route }) => ({ title: route.params.bookName })} 
-      />
-      <Stack.Screen 
-        name="Verses" 
-        component={VersesScreen} 
-        options={({ route }) => ({ title: `${route.params.bookName} ${route.params.chapter}` })} 
-      />
-    </Stack.Navigator>
-  );
+    const [daylyVerseText, setDaylyVerseText] = useState<{ text: string; book: string; chapter: number; verse: number }>({
+        text: '',
+        book: '',
+        chapter: 0,
+        verse: 0,
+    });
+    useEffect(() => {
+        const randomVerse = daylyVerse[Math.floor(Math.random() * daylyVerse.length)];
+        setDaylyVerseText({
+            book: randomVerse.book,
+            chapter: randomVerse.chapter,
+            verse: randomVerse.verse,
+            text: queryVerse(randomVerse.book, randomVerse.chapter, randomVerse.verse),
+        });
+    }, []);
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerH1}>Bíblia Sagrada</Text>
+                <Text>Versão ACF - Almeida Corrigida e Fiel</Text>
+            </View>
+
+            <TouchableOpacity
+                style={styles.search}
+                onPress={() => {
+                    router.push({
+                        pathname: '/(tabs)/explore',
+                        params: { title: 'Buscar na Bíblia' }
+                    });
+                }}
+            >
+                <Search size={24} color="#ccc" />
+                <Text style={{ fontSize: 12 }}>Pesquise por passagens, livros ou palavras chaves</Text>
+            </TouchableOpacity>
+
+            <View style={styles.daylyVerse}>
+                <LinearGradient
+                    start={{ x: 0, y: 0.75 }}
+                    end={{ x: 1, y: 0.25 }}
+                    colors={['#5073a2', '#263d5c']}
+                    style={styles.daylyVerseBackground}
+                />
+                <View style={styles.daylyVerseHeader}>
+                    <Bookmark color='white' size={12} />
+                    <Text style={styles.daylyVerseHeaderText}>
+                        {daylyVerseText.book} {daylyVerseText.chapter}:{daylyVerseText.verse}
+                    </Text>
+                </View>
+                <Text style={styles.daylyVerseText}>
+                    “
+                    {daylyVerseText.text}
+                    ”
+                </Text>
+            </View>
+
+            <View style={styles.menuContainer}>
+                <TouchableOpacity style={styles.menuItem}>
+                    <BookMarked size={36} color={THEME.COLORS.PRIMARY} />
+                    <Text>Continuar leitura</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 50,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingHorizontal: 32,
+    },
+    header: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    headerH1: {
+        fontSize: 32,
+        fontWeight: 'bold',
+    },
+    search: {
+        width: '100%',
+        marginTop: 48,
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#ffffff',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        fontSize: 8,
+    },
+    daylyVerse: {
+        width: '100%',
+        marginTop: 18,
+        padding: 20,
+    },
+    daylyVerseBackground: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: "100%",
+        borderRadius: 16,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
+    },
+    daylyVerseHeader: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 4,
+    },
+    daylyVerseHeaderText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 12,
+        textAlign: 'right',
+    },
+    daylyVerseText: {
+        color: 'white',
+        fontSize: 16,
+        marginTop: 24,
+        marginBottom: 48,
+        textAlign: 'left',
+    },
+    menuContainer: {
+        width: '100%',
+        marginTop: 32,
+        flexDirection: 'row',
+        gap: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    menuItem: {
+        flex: 1,
+        paddingHorizontal: 18,
+        paddingVertical: 24,
+        borderBottomWidth: 2,
+        borderBottomColor: THEME.COLORS.PRIMARY,
+        alignItems: 'center',
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
+    },
+});
