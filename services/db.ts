@@ -1,73 +1,62 @@
-
+import { bible } from '@/assets/db/ACF';
 import { Book, Chapter, SearchResult, Verse } from '@/types/types';
-import { Asset } from 'expo-asset';
-import * as FileSystem from "expo-file-system/legacy";
-import * as SQLite from 'expo-sqlite';
-import acfAsset from '../assets/sqlite/ACF.sqlite';
 
-const DB_NAME = "ACF.sqlite";
-
-const asset = Asset.fromModule(acfAsset);
-const dbPath = `${FileSystem.documentDirectory}SQLite/${DB_NAME}`;
-
-export async function openDatabase() {
-    const sqliteDir = `${FileSystem.documentDirectory}SQLite`;
-    if (!(await FileSystem.getInfoAsync(sqliteDir)).exists) {
-        await FileSystem.makeDirectoryAsync(sqliteDir);
-    }
-
-    if (!(await FileSystem.getInfoAsync(dbPath)).exists) {
-        await FileSystem.downloadAsync(asset.uri, dbPath);
-    }
-
-    return SQLite.openDatabaseAsync(DB_NAME);
-}
+const books = bible.map((book, index) => ({
+  id: index + 1,
+  name: book.name,
+  testament_reference_id: index < 39 ? 1 : 2,
+  abbrev: book.abbrev,
+  chapters: book.chapters,
+}));
 
 export async function getBooks(): Promise<{ oldTestament: Book[], newTestament: Book[] }> {
-    const db = await openDatabase();
-    const result = await db.getAllAsync<Book>(`SELECT * FROM book ORDER BY id`);
-    const oldTestament = result.filter(b => b.testament_reference_id === 1);
-    const newTestament = result.filter(b => b.testament_reference_id === 2);
-
-    return { oldTestament, newTestament };
+  const oldTestament = books.filter(b => b.testament_reference_id === 1);
+  const newTestament = books.filter(b => b.testament_reference_id === 2);
+  return { oldTestament, newTestament };
 }
 
 export async function getChapters(bookId: number): Promise<Chapter[]> {
-    const db = await openDatabase();
-
-    const result = await db.getAllAsync<Chapter>(
-        'SELECT DISTINCT chapter FROM verse WHERE book_id = ? ORDER BY chapter',
-        [bookId]
-    );
-    if (result.length > 0) {
-        return result;
-    } else {
-        return [];
-    }
+  const book = books.find(b => b.id === bookId);
+  if (book) {
+    return book.chapters.map((_, index) => ({ chapter: index + 1 }));
+  }
+  return [];
 }
 
 export async function getVerses(bookId: number, chapter: number): Promise<Verse[]> {
-    const db = await openDatabase();
-    const result = await db.getAllAsync<Verse>(
-        'SELECT * FROM verse WHERE book_id = ? AND chapter = ? ORDER BY verse',
-        [bookId, chapter]
-    );
-    if (result.length > 0) {
-        return result;
-    } else {
-        return [];
-    }
+  const book = books.find(b => b.id === bookId);
+  if (book && book.chapters[chapter - 1]) {
+    return book.chapters[chapter - 1].map((text, index) => ({
+      id: bookId * 1000000 + chapter * 1000 + index + 1,
+      book_id: bookId,
+      chapter: chapter,
+      verse: index + 1,
+      text: text,
+    }));
+  }
+  return [];
 }
 
 export async function search(query: string): Promise<SearchResult[]> {
-    const db = await openDatabase();
-    const result = await db.getAllAsync<SearchResult>(
-        `SELECT v.text, v.chapter, v.verse, b.name as book_name, b.id as book_id FROM verse v JOIN book b ON v.book_id = b.id WHERE v.text LIKE ?`,
-        [`%${query}%`]
-    );
-    if (result.length > 0) {
-        return result;
-    } else {
-        return [];
+  const results: SearchResult[] = [];
+  const lowerCaseQuery = query.toLowerCase();
+
+  for (const book of books) {
+    for (let chapterIndex = 0; chapterIndex < book.chapters.length; chapterIndex++) {
+      for (let verseIndex = 0; verseIndex < book.chapters[chapterIndex].length; verseIndex++) {
+        const verseText = book.chapters[chapterIndex][verseIndex];
+        if (verseText.toLowerCase().includes(lowerCaseQuery)) {
+          results.push({
+            book_id: book.id,
+            book_name: book.name,
+            chapter: chapterIndex + 1,
+            verse: verseIndex + 1,
+            text: verseText,
+          });
+        }
+      }
     }
+  }
+
+  return results;
 }
