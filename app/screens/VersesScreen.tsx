@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         lineHeight: 28,
         textAlign: 'justify',
+        paddingBottom: 100,
     },
     verseNumber: {
         fontWeight: 'bold',

@@ -1,9 +1,9 @@
 
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { getChapters } from '@/services/db';
 import { Chapter } from '@/types/types';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ChaptersScreen() {
     const [chapters, setChapters] = useState<Chapter[]>([]);
