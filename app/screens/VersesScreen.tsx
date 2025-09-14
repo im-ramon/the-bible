@@ -4,6 +4,7 @@ import { Verse } from '@/types/types';
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
+import { Button } from 'tamagui';
 
 export default function VersesScreen() {
     const [verses, setVerses] = useState<Verse[]>([]);
@@ -19,6 +20,8 @@ export default function VersesScreen() {
 
     return (
         <ScrollView style={styles.container}>
+            <Button >Lorem ipsum</Button>
+            <Button size="$6">Lorem ipsum</Button>
             <Text style={styles.verseText}>
                 {verses.map(v => (
                     <Text key={v.id} onPress={() => alert(`Clicou no versículo ${v.verse}!`)}>

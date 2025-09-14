@@ -1,16 +1,19 @@
-module.exports = function(api) {
+process.env.TAMAGUI_TARGET = "native";
+
+module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo'],
+    presets: ["babel-preset-expo"],
     plugins: [
       [
-        'module-resolver',
+        "@tamagui/babel-plugin",
         {
-          alias: {
-            '@': './',
-          },
+          components: ["tamagui"],
+          config: "./tamagui.config.ts",
+          logTimings: true,
         },
       ],
+      "react-native-reanimated/plugin",
     ],
   };
 };
