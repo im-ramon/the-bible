@@ -7,6 +7,10 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
+                tabBarStyle: {
+                    height: 60,
+                    paddingTop: 8,
+                },
             }}>
             <Tabs.Screen
                 name="configuration"
