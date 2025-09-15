@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
-import { View, Text, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
 import { getBooks } from '@/services/db';
 import { Book } from '@/types/types';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function BooksScreen() {
     const [sections, setSections] = useState<{ title: string; data: Book[] }[]>([]);
-    const navigation = useNavigation();
+    const router = useRouter();
 
     useEffect(() => {
         (async () => {
@@ -20,7 +20,13 @@ export default function BooksScreen() {
     }, []);
 
     const handlePressBook = (book: Book) => {
-        navigation.navigate('Chapters', { bookId: book.id, bookName: book.name });
+        router.navigate({
+            pathname: "/(tabs)/bible/chapters",
+            params: {
+                bookId: book.id,
+                bookName: book.name,
+            },
+        });
     };
 
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 
 import { getVerses } from '@/services/db';
 import { Verse } from '@/types/types';
@@ -7,8 +8,9 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function VersesScreen() {
     const [verses, setVerses] = useState<Verse[]>([]);
+
     const route = useRoute();
-    const { bookId, chapter } = route.params as { bookId: number, chapter: number };
+    const { bookId, chapter, highlightedVerse } = route.params as { bookId: number, chapter: number, highlightedVerse?: number };
 
     useEffect(() => {
         (async () => {
@@ -21,7 +23,11 @@ export default function VersesScreen() {
         <ScrollView style={styles.container}>
             <Text style={styles.verseText}>
                 {verses.map(v => (
-                    <Text key={v.id} onPress={() => alert(`Clicou no versículo ${v.verse}!`)}>
+                    <Text
+                        key={v.id}
+                        style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
+                        onPress={() => alert(`Clicou no versículo ${v.verse}!`)}
+                    >
                         <Text style={styles.verseNumber}>{v.verse} </Text>
                         {v.text}
                         {' '}

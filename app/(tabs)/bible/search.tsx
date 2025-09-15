@@ -1,14 +1,14 @@
 
 import { search } from '@/services/db';
 import { SearchResult } from '@/types/types';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SearchScreen() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
-    const navigation = useNavigation();
+    const router = useRouter();
 
     const handleSearch = async () => {
         if (query.trim() === '') {
@@ -19,8 +19,11 @@ export default function SearchScreen() {
         setResults(searchResults);
     };
 
-    const navigateToVerse = (navigation: any, item: SearchResult) => {
-        navigation.navigate('Verses', { bookId: item.book_id, chapter: item.chapter, bookName: item.book_name });
+    const navigateToVerse = (item: SearchResult) => {
+        router.navigate({
+            pathname: "/(tabs)/bible/verses",
+            params: { bookId: item.book_id, chapter: item.chapter, bookName: item.book_name, highlightedVerse: item.verse },
+        });
     };
 
     return (
@@ -36,7 +39,7 @@ export default function SearchScreen() {
                 data={results}
                 keyExtractor={(item, index) => `${item.book_name}-${item.chapter}-${item.verse}-${index}`}
                 renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.item} onPress={() => navigateToVerse(navigation, item)}>
+                    <TouchableOpacity style={styles.item} onPress={() => navigateToVerse(item)}>
                         <Text style={styles.itemText}>
                             <Text style={styles.itemTitle}>{`${item.book_name} ${item.chapter}:${item.verse}`}</Text> – {item.text}
                         </Text>

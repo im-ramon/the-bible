@@ -1,25 +1,34 @@
 
 import { getChapters } from '@/services/db';
 import { Chapter } from '@/types/types';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ChaptersScreen() {
     const [chapters, setChapters] = useState<Chapter[]>([]);
-    const navigation = useNavigation();
     const route = useRoute();
     const { bookId, bookName } = route.params as { bookId: number, bookName: string };
+    const router = useRouter();
 
     useEffect(() => {
         (async () => {
             const fetchedChapters = await getChapters(bookId);
             setChapters(fetchedChapters);
         })();
-    }, [bookId]);
+    }, [bookId, bookName]);
 
     const handlePressChapter = (chapter: number) => {
-        navigation.navigate('Verses', { bookId, chapter, bookName });
+        // navigation.navigate('Verses', { bookId, chapter, bookName });
+        router.navigate({
+            pathname: "/(tabs)/bible/verses",
+            params: {
+                bookId,
+                chapter,
+                bookName,
+            },
+        });
     };
 
     return (
