@@ -1,6 +1,8 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import {
     MD3LightTheme as DefaultThemeNativePaper,
     PaperProvider
@@ -30,6 +32,9 @@ const theme = {
 };
 
 export default function RootLayout() {
+    useEffect(() => {
+        NavigationBar.setStyle("light");
+    }, []);
 
     return (
         <ThemeProvider value={DefaultTheme}>

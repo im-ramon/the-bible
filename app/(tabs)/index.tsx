@@ -1,12 +1,12 @@
-
 import { daylyVerse, queryVerse } from '@/assets/db/daylyVerse';
 import { THEME } from '@/styles/styles';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { Bookmark, BookMarked, Search } from 'lucide-react-native';
+import { Book, Bookmark, BookMarked, ChevronRight, Clock10, Search } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import backgroundImage from '../../assets/images/bg-paper.jpg';
 import bookmark from '../../assets/images/bookmark.png';
 
 export default function Index() {
@@ -31,7 +31,7 @@ export default function Index() {
     }, []);
 
     return (
-        <View style={styles.image}>
+        <ImageBackground source={backgroundImage} style={styles.image}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.headerH1}>Bíblia Sagrada</Text>
@@ -72,21 +72,10 @@ export default function Index() {
                         colors={['#5073a2', '#263d5c']}
                         style={styles.daylyVerseBackground}
                     />
-                    <View
-                        style={{
-                            position: 'absolute',
-                            width: 36,
-                            height: 36,
-                            top: -4,
-                            left: 32,
-                        }}>
+                    <View style={styles.bookmarkWrapper}>
                         <Image
                             source={bookmark}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                resizeMode: 'contain',
-                            }}
+                            style={styles.bookmarkImage}
                         />
                     </View>
                     <View style={styles.daylyVerseHeader}>
@@ -102,49 +91,43 @@ export default function Index() {
                     </Text>
                 </TouchableOpacity>
 
-                <View style={{
-                    borderBottomColor: '#ccc',
-                    borderBottomWidth: 1,
-                    width: '100%',
-                    marginTop: 1,
-                    paddingBottom: 8,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
-                    <View style={{
-                        position: 'absolute',
-                        top: -5,
-                        backgroundColor: '#f2f2f2',
-                        paddingHorizontal: 32,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}>
-                        <Text
-                            style={{
-                                fontSize: 16,
-                                fontWeight: 'bold',
-                                color: "#adadad",
-                            }}
-                        >
-                            Menu
-                        </Text>
+                <View>
+                    <View style={styles.menuItemTitleArea}>
+                        <Clock10 color={THEME.COLORS.BLACK} size={16} />
+                        <Text style={styles.menuItemTitle}>Continuar lendo</Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.menuItem}>
+                        <BookMarked color={THEME.COLORS.PRIMARY} size={32} />
+                        <View>
+                            <Text style={styles.firstMenuItemText}>Gênesis</Text>
+                            <Text style={styles.firstMenuItemSubText}>Capítulo 1 - Verso 1</Text>
+                        </View>
+                        <View style={{ marginLeft: 'auto' }} >
+                            <ChevronRight size={28} color={THEME.COLORS.GRAY} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ marginTop: 16, width: '100%' }}>
+                    <View style={styles.menuItemTitleArea}>
+                        <Book color={THEME.COLORS.BLACK} size={16} />
+                        <Text style={styles.menuItemTitle}>Explorar a Bíblia</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', gap: 8, width: '100%', flex: 1 }}>
+                        <TouchableOpacity style={styles.menu2Item}>
+                            <Text style={styles.firstMenuItemText}>Antigo testamento</Text>
+                            <Text style={styles.firstMenuItemSubText}>39 livros</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.menu2Item}>
+                            <Text style={styles.firstMenuItemText}>Novo testamento</Text>
+                            <Text style={styles.firstMenuItemSubText}>27 livros</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-
-                <View style={styles.menuContainer}>
-                    <TouchableOpacity style={styles.menuItem}>
-                        <BookMarked size={36} color={THEME.COLORS.PRIMARY} />
-                        <Text>Continuar leitura</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.menuItem}>
-                        <BookMarked size={36} color={THEME.COLORS.PRIMARY} />
-                        <Text>Continuar leitura</Text>
-                    </TouchableOpacity>
-
-                </View>
             </View>
-        </View >
+        </ImageBackground >
     );
 }
 
@@ -159,7 +142,6 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         justifyContent: 'center',
-        top: -16,
     },
     header: {
         width: '100%',
@@ -174,7 +156,8 @@ const styles = StyleSheet.create({
         marginTop: 48,
         padding: 12,
         borderRadius: 8,
-        borderWidth: 1,
+        borderStyle: 'solid',
+        borderWidth: THEME.SIZE.BORDER_WIDTH,
         borderColor: '#ccc',
         backgroundColor: '#ffffff',
         flexDirection: 'row',
@@ -188,12 +171,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     daylyVerseBackground: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        height: "100%",
         borderRadius: 16,
+        elevation: 24,
+        height: "100%",
+        left: 0,
+        position: 'absolute',
+        right: 0,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -201,13 +184,25 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.58,
         shadowRadius: 16.00,
-        elevation: 24,
+        top: 0,
+    },
+    bookmarkWrapper: {
+        position: 'absolute',
+        width: 36,
+        height: 36,
+        top: -4,
+        left: 32,
+    },
+    bookmarkImage: {
+        height: "100%",
+        resizeMode: 'contain',
+        width: "100%",
     },
     daylyVerseHeader: {
-        justifyContent: 'flex-end',
         alignItems: 'center',
         flexDirection: 'row',
         gap: 4,
+        justifyContent: 'flex-end',
     },
     daylyVerseHeaderText: {
         color: 'white',
@@ -218,26 +213,103 @@ const styles = StyleSheet.create({
     daylyVerseText: {
         color: 'white',
         fontSize: 16,
-        marginTop: 24,
         marginBottom: 48,
+        marginTop: 24,
         textAlign: 'left',
     },
-    menuContainer: {
+    menuDivider: {
+        alignItems: 'center',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        marginTop: 1,
+        paddingBottom: 8,
         width: '100%',
-        marginTop: 32,
+    },
+    menuLabelWrapper: {
+        alignItems: 'center',
+        backgroundColor: '#f2f2f2',
+        borderColor: '#ccc',
+        borderRadius: 12,
+        borderWidth: 1,
+        justifyContent: 'center',
+        paddingHorizontal: 32,
+        paddingVertical: 4,
+        position: 'absolute',
+        top: -6,
+    },
+    menuLabelText: {
+        color: "#141414",
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    menuContainer: {
+        alignItems: 'center',
         flexDirection: 'row',
         gap: 16,
         justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: 16,
+        width: '100%',
     },
     menuItem: {
-        flex: 1,
-        paddingHorizontal: 18,
-        paddingVertical: 24,
-        borderBottomWidth: 2,
-        borderBottomColor: THEME.COLORS.PRIMARY,
         alignItems: 'center',
-        borderRadius: 12,
         backgroundColor: '#ffffff',
+        borderColor: THEME.COLORS.GRAY,
+        borderWidth: THEME.SIZE.BORDER_WIDTH,
+        borderLeftWidth: THEME.SIZE.BORDER_WIDTH,
+        borderRadius: THEME.SIZE.BORDER_RADIUS,
+        gap: 4,
+        marginBottom: 8,
+        paddingHorizontal: 18,
+        paddingVertical: 18,
+        width: '100%',
+        flexDirection: 'row',
     },
+    menu2Item: {
+        alignItems: 'flex-start',
+        backgroundColor: '#ffffff',
+        borderColor: THEME.COLORS.GRAY,
+        borderWidth: THEME.SIZE.BORDER_WIDTH,
+        borderLeftWidth: THEME.SIZE.BORDER_WIDTH,
+        borderRadius: THEME.SIZE.BORDER_RADIUS,
+        gap: 4,
+        marginBottom: 8,
+        paddingHorizontal: 18,
+        paddingVertical: 18,
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
+    firstMenuItemText: {
+        fontSize: 16 - 2,
+        fontWeight: '700',
+        color: THEME.COLORS.PRIMARY,
+        top: 0,
+    },
+    firstMenuItemSubText: {
+        fontSize: 14 - 2,
+        fontWeight: '600',
+        opacity: 0.6,
+        bottom: 1,
+    },
+    menuList: {
+        flex: 1,
+        width: '100%',
+        gap: 8,
+        marginTop: 0,
+        marginBottom: 32,
+    },
+    menuItemTitleArea: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 4,
+        marginBottom: 8,
+        width: '100%',
+        paddingLeft: 4,
+    },
+    menuItemTitle: {
+        color: THEME.COLORS.BLACK,
+        fontSize: 14,
+        fontWeight: '600',
+    }
 });
