@@ -1,5 +1,6 @@
 /* eslint-disable eqeqeq */
 
+import DialogSaveFavorites from '@/components/DialogSaveFavorites';
 import { getVerses } from '@/services/db';
 import { Verse } from '@/types/types';
 import { useRoute } from '@react-navigation/native';
@@ -9,9 +10,14 @@ import { Dimensions, ScrollView, StyleSheet, Text } from 'react-native';
 export default function VersesScreen() {
     const scrollRef = useRef<ScrollView>(null);
     const [verses, setVerses] = useState<Verse[]>([]);
+    const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
 
     const route = useRoute();
-    const { bookId, chapter, highlightedVerse } = route.params as { bookId: number, chapter: number, highlightedVerse?: number };
+    const { bookId, chapter, highlightedVerse, bookName } = route.params as { bookId: number, chapter: number, highlightedVerse?: number, bookName: string };
+
+    function handleClickVerse(verse: Verse) {
+        setSelectedVerse(verse);
+    }
 
     useEffect(() => {
         (async () => {
@@ -28,7 +34,7 @@ export default function VersesScreen() {
             const lineHeight = styles.verseText.lineHeight; // altura da linha
             const charsBeforeTheVerse = verses.slice(0, (highlightedVerse ?? 1) - 1).reduce((acc, v) => acc + v.text.length + v.verse.toString().length + 1, 0);
             const posY = ((charsBeforeTheVerse / charInEachLine) * lineHeight) + 1;
-            
+
             // console.log("-----------------------------")
             // console.log("charInEachLine: ", charInEachLine);
             // console.log("lineHeight: ", lineHeight);
@@ -42,21 +48,31 @@ export default function VersesScreen() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
-        <ScrollView ref={scrollRef} style={styles.container}>
-            <Text style={styles.verseText}>
-                {verses.map(v => (
-                    <Text
-                        key={v.id}
-                        style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
-                        onPress={() => alert(`Versículo ${v.verse}: \n${v.text}`)}
-                    >
-                        <Text style={styles.verseNumber}>{v.verse} </Text>
-                        {v.text}
-                        {' '}
-                    </Text>
-                ))}
-            </Text>
-        </ScrollView>
+        <>
+            <ScrollView ref={scrollRef} style={styles.container}>
+                <Text style={styles.verseText}>
+                    {verses.map(v => (
+                        <>
+                            <Text
+                                key={v.id}
+                                style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
+                                onPress={() => handleClickVerse(v)}
+                            >
+                                <Text style={styles.verseNumber}>{v.verse} </Text>
+                                {v.text}
+                                {' '}
+                            </Text>
+                        </>
+                    ))}
+                </Text>
+            </ScrollView>
+            <DialogSaveFavorites
+                visible={!!selectedVerse}
+                hideDialog={() => setSelectedVerse(null)}
+                verse={selectedVerse}
+                bookName={bookName}
+            />
+        </>
     );
 }
 
