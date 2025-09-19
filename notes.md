@@ -1,4 +1,5 @@
-[ ] Colocar links para testamentos na home
-[ ] Configurar favoritos
+[X] Colocar links para testamentos na home
 [X] Corrigir última linha de exibição dos capítulos (está ficando grande para adaptar à largura)
-[+] Colocar quantidade de capítulos em cada linha do nome do capítulo
+[X] Colocar quantidade de capítulos em cada linha do nome do capítulo
+[ ] Configurar favoritos
+[ ] Configurar tela de configurações

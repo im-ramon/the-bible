@@ -3,7 +3,7 @@ import { search } from '@/services/db';
 import { THEME } from '@/styles/styles';
 import { SearchResult } from '@/types/types';
 import { useRouter } from 'expo-router';
-import { Search } from 'lucide-react-native';
+import { Search, XCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -39,6 +39,19 @@ export default function SearchScreen() {
                     onChangeText={setQuery}
                     onSubmitEditing={handleSearch}
                 />
+                <TouchableOpacity>
+                    <XCircle
+                        size={22}
+                        color={THEME.COLORS.DANGER}
+                        onPress={() => { setQuery(''); setResults([]); }}
+                        style={{
+                            opacity: query ? 1 : 0,
+                            borderRadius: "100%",
+                            marginRight: 4,
+                         }}
+                    
+                    />
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.searchButton}
                     onPress={handleSearch}
@@ -76,7 +89,7 @@ const styles = StyleSheet.create({
     },
     input: {
         color: THEME.COLORS.BLACK,
-        width: "90%"
+        flex: 1,
     },
     search: {
         alignItems: 'center',

@@ -1,7 +1,8 @@
 export interface Book {
   id: number;
   name: string;
-  testament_reference_id: number;
+    testament_reference_id: number;
+    chapters: [][]; 
 }
 
 export interface Chapter {

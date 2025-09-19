@@ -114,12 +114,22 @@ export default function Index() {
                         <Book color={THEME.COLORS.BLACK} size={16} />
                         <Text style={styles.menuItemTitle}>Explorar a Bíblia</Text>
                     </View>
-                    <View style={{flexDirection: 'row', gap: 12}}>
-                        <TouchableOpacity style={styles.menu2Item}>
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                        <TouchableOpacity
+                            style={styles.menu2Item}
+                            onPress={() => {
+                                router.push({ pathname: '/(tabs)/bible/books', params: { title: 'Antigo Testamento' } });
+                            }}
+                        >
                             <Text style={styles.firstMenuItemText}>Antigo testamento</Text>
                             <Text style={styles.firstMenuItemSubText}>39 livros</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.menu2Item}>
+                        <TouchableOpacity
+                            style={styles.menu2Item}
+                            onPress={() => {
+                                router.push({ pathname: '/(tabs)/bible/books', params: { title: 'Novo Testamento' } });
+                            }}
+                        >
                             <Text style={styles.firstMenuItemText}>Novo testamento</Text>
                             <Text style={styles.firstMenuItemSubText}>27 livros</Text>
                         </TouchableOpacity>
