@@ -1,9 +1,11 @@
 import { daylyVerse, queryVerse } from '@/assets/db/daylyVerse';
 import { THEME } from '@/styles/styles';
+import { getLastReadedVerse } from '@/utils/local_storage';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Book, Bookmark, BookMarked, ChevronRight, Clock10, Search } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import backgroundImage from '../../assets/images/bg-paper.jpg';
@@ -19,6 +21,8 @@ export default function Index() {
         verse: 0,
         bookId: 0,
     });
+    const [lastReaded, setLastReaded] = useState<null | { bookName: string, bookId: number, chapter: number, verse: number, text: string }>(null);
+
     useEffect(() => {
         const randomVerse = daylyVerse[Math.floor(Math.random() * daylyVerse.length)];
         setDaylyVerseText({
@@ -29,6 +33,30 @@ export default function Index() {
             bookId: randomVerse.bookId,
         });
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            let isActive = true;
+            const fetchLastReaded = async () => {
+                const data = await getLastReadedVerse();
+                if (isActive) {
+                    if (data) {
+                        setLastReaded({
+                            bookName: data.bookName,
+                            bookId: Number(data.bookId),
+                            chapter: Number(data.chapter),
+                            verse: Number(data.verse),
+                            text: data.text,
+                        });
+                    } else {
+                        setLastReaded(null);
+                    }
+                }
+            };
+            fetchLastReaded();
+            return () => { isActive = false; };
+        }, [])
+    );
 
     return (
         <ImageBackground source={backgroundImage} style={styles.image}>
@@ -97,11 +125,33 @@ export default function Index() {
                         <Text style={styles.menuItemTitle}>Continuar lendo</Text>
                     </View>
 
-                    <TouchableOpacity style={styles.menuItem}>
+                    <TouchableOpacity
+                        style={styles.menuItem}
+                        disabled={!lastReaded}
+                        onPress={() => {
+                            if (lastReaded) {
+                                router.navigate({
+                                    pathname: "/(tabs)/bible/verses",
+                                    params: {
+                                        bookId: lastReaded.bookId,
+                                        chapter: lastReaded.chapter,
+                                        bookName: lastReaded.bookName,
+                                        highlightedVerse: lastReaded.verse
+                                    }
+                                });
+                            }
+                        }}
+                    >
                         <BookMarked color={THEME.COLORS.PRIMARY} size={32} />
                         <View>
-                            <Text style={styles.firstMenuItemText}>Gênesis</Text>
-                            <Text style={styles.firstMenuItemSubText}>Capítulo 1 - Verso 1</Text>
+                            <Text style={styles.firstMenuItemText}>
+                                {lastReaded ? lastReaded.bookName : "Nenhum marcador"}
+                            </Text>
+                            <Text style={styles.firstMenuItemSubText}>
+                                {lastReaded
+                                    ? `Capítulo ${lastReaded.chapter} - Verso ${lastReaded.verse}`
+                                    : "Salve um marcador para continuar"}
+                            </Text>
                         </View>
                         <View style={{ marginLeft: 'auto' }} >
                             <ChevronRight size={28} color={THEME.COLORS.GRAY} />
