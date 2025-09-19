@@ -48,7 +48,7 @@ export default function VersesScreen() {
                     <Text
                         key={v.id}
                         style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
-                        onPress={() => alert(`Clicou no versículo ${v.verse}!`)}
+                        onPress={() => alert(`Versículo ${v.verse}: \n${v.text}`)}
                     >
                         <Text style={styles.verseNumber}>{v.verse} </Text>
                         {v.text}

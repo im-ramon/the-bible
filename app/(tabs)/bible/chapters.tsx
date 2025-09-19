@@ -15,6 +15,12 @@ export default function ChaptersScreen() {
     useEffect(() => {
         (async () => {
             const fetchedChapters = await getChapters(bookId);
+            const difTo5 = 5 - (fetchedChapters.length % 5);
+            if (difTo5 < 5) { 
+                for (let i = 0; i < difTo5; i++) {
+                    fetchedChapters.push({ chapter: -1 });
+                }
+            }
             setChapters(fetchedChapters);
         })();
     }, [bookId, bookName]);
@@ -38,9 +44,10 @@ export default function ChaptersScreen() {
                 keyExtractor={(item) => item.chapter.toString()}
                 numColumns={5}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handlePressChapter(item.chapter)} style={styles.item}>
-                        <Text style={styles.itemText}>{item.chapter}</Text>
-                    </TouchableOpacity>
+                    item.chapter === -1 ? <View style={[styles.item, { borderWidth: 0, }]} /> :
+                        <TouchableOpacity onPress={() => handlePressChapter(item.chapter)} style={styles.item}>
+                            <Text style={styles.itemText}>{item.chapter}</Text>
+                        </TouchableOpacity>
                 )}
             />
         </View>

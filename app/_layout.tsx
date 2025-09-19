@@ -33,7 +33,7 @@ const theme = {
 
 export default function RootLayout() {
     useEffect(() => {
-        NavigationBar.setStyle("light");
+        NavigationBar.setStyle("auto");
     }, []);
 
     return (
@@ -47,7 +47,7 @@ export default function RootLayout() {
                     </SafeAreaView>
                 </SafeAreaProvider>
             </PaperProvider>
-            <StatusBar style="dark" />
+            <StatusBar style="auto" />
         </ThemeProvider >
     );
 }

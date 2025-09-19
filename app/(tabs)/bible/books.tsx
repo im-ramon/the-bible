@@ -29,6 +29,8 @@ export default function BooksScreen() {
         });
     };
 
+
+
     return (
         <View style={styles.container}>
             <SectionList
@@ -37,6 +39,7 @@ export default function BooksScreen() {
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => handlePressBook(item)} style={styles.item}>
                         <Text style={styles.itemText}>{item.name}</Text>
+                        <Text>45 cap</Text>
                     </TouchableOpacity>
                 )}
                 renderSectionHeader={({ section: { title } }) => (
@@ -62,6 +65,10 @@ const styles = StyleSheet.create({
         padding: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingRight: 20,
     },
     itemText: {
         fontSize: 18,

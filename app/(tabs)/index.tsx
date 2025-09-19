@@ -114,8 +114,7 @@ export default function Index() {
                         <Book color={THEME.COLORS.BLACK} size={16} />
                         <Text style={styles.menuItemTitle}>Explorar a Bíblia</Text>
                     </View>
-
-                    <View style={{ flexDirection: 'row', gap: 8, width: '100%', flex: 1 }}>
+                    <View style={{flexDirection: 'row', gap: 12}}>
                         <TouchableOpacity style={styles.menu2Item}>
                             <Text style={styles.firstMenuItemText}>Antigo testamento</Text>
                             <Text style={styles.firstMenuItemSubText}>39 livros</Text>
@@ -127,7 +126,7 @@ export default function Index() {
                     </View>
                 </View>
             </View>
-        </ImageBackground >
+        </ImageBackground>
     );
 }
 
@@ -277,8 +276,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 18,
         paddingVertical: 18,
         flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
     },
     firstMenuItemText: {
         fontSize: 16 - 2,
