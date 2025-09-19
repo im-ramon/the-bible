@@ -7,17 +7,20 @@ import { useRouter } from 'expo-router';
 import { Share2, Trash2 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Button } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 
 export default function Bookmarks() {
     const router = useRouter();
 
     const [favorites, setFavorites] = useState<(Verse & { bookName: string })[]>([]);
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
 
     async function fetchFavorites() {
+        setLoading(true);
         const favs = await getFavoriteVerses();
         setFavorites(favs);
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -34,7 +37,7 @@ export default function Bookmarks() {
             !(v.bookName === verse.bookName && v.chapter === verse.chapter && v.verse === verse.verse)
         );
         await AsyncStorage.setItem('favoriteVerses', JSON.stringify(favs));
-            setFavorites(favs);
+        setFavorites(favs);
     }
 
     async function handleClearAll() {
@@ -81,29 +84,30 @@ export default function Bookmarks() {
             {favorites.length === 0 ? (
                 <Text style={styles.emptyText}>Nenhum verso favorito salvo.</Text>
             ) : (
-                <ScrollView>
-                    {favorites.map((v, idx) => (
-                        <View key={`${v.bookName}-${v.chapter}-${v.verse}-${idx}`} style={styles.verseRow}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={() => handleNavigate(v)}>
-                                <Text style={styles.verseText}>
-                                    <Text style={styles.verseNumber}>{v.bookName} {v.chapter}:{v.verse} </Text>
-                                    {v.text}
-                                </Text>
-                            </TouchableOpacity>
-                            <View style={styles.actions}>
-                                <TouchableOpacity onPress={() => handleShare(v)} style={styles.actionBtn}>
-                                    <Share2 size={18} color={THEME.COLORS.PRIMARY} />
+                loading ? <ActivityIndicator size="large" color={THEME.COLORS.PRIMARY} style={{ marginTop: 20 }} /> :
+                    <ScrollView>
+                        {favorites.map((v, idx) => (
+                            <View key={`${v.bookName}-${v.chapter}-${v.verse}-${idx}`} style={styles.verseRow}>
+                                <TouchableOpacity style={{ flex: 1 }} onPress={() => handleNavigate(v)}>
+                                    <Text style={styles.verseText}>
+                                        <Text style={styles.verseNumber}>{v.bookName} {v.chapter}:{v.verse} </Text>
+                                        {v.text}
+                                    </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleDelete(v)} style={styles.actionBtn}>
-                                    <Trash2 size={19} color={THEME.COLORS.DANGER} />
-                                </TouchableOpacity>
+                                <View style={styles.actions}>
+                                    <TouchableOpacity onPress={() => handleShare(v)} style={styles.actionBtn}>
+                                        <Share2 size={18} color={THEME.COLORS.PRIMARY} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => handleDelete(v)} style={styles.actionBtn}>
+                                        <Trash2 size={19} color={THEME.COLORS.DANGER} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                    ))}
-                </ScrollView>
+                        ))}
+                    </ScrollView>
             )}
             {
-                favorites.length > 0 && (
+                (favorites.length > 0 && !loading) && (
                     <Button
                         mode="contained-tonal"
                         style={styles.clearAllBtn}

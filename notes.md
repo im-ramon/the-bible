@@ -3,5 +3,5 @@
 [X] Colocar quantidade de capítulos em cada linha do nome do capítulo
 [X] Configurar favoritos
 [X] Faz seta de votar dos livros voltar especificamente para tela anterior
-[ ] Configurar tela de configurações
 [X] Implementar lógica de "continuar lendo"
+[ ] Configurar tela de configurações
