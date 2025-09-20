@@ -1,13 +1,16 @@
 /* eslint-disable eqeqeq */
 
+import { bible } from '@/assets/db/ACF';
 import DialogSaveFavorites from '@/components/dialog_save_favorites';
 import { getVerses } from '@/services/db';
 import { THEME } from '@/styles/styles';
 import { Verse } from '@/types/types';
 import { saveLastReadedVerse } from '@/utils/local_storage';
 import { useRoute } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import { CircleArrowLeft, CircleArrowRight } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function VersesScreen() {
     const scrollRef = useRef<ScrollView>(null);
@@ -15,10 +18,31 @@ export default function VersesScreen() {
     const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
 
     const route = useRoute();
+    const router = useRouter();
     const { bookId, chapter, highlightedVerse, bookName } = route.params as { bookId: number, chapter: number, highlightedVerse?: number, bookName: string };
+    const numberOfChapters = getNumberOfChapters(bookId);
 
     function handleClickVerse(verse: Verse) {
         setSelectedVerse(verse);
+    }
+
+    function navigateBetweenChapters(action: "previous" | "next") {
+        const newChapter = action === "next" ? Number(chapter) + 1 : Number(chapter) - 1;
+
+        if (newChapter < 1 || newChapter > numberOfChapters) return;
+
+        router.navigate({
+            pathname: "/(tabs)/bible/verses",
+            params: {
+                bookId,
+                chapter: newChapter,
+                bookName,
+            },
+        });
+    }
+
+    function getNumberOfChapters(bookId: number) {
+        return bible[bookId - 1].chapters.length;
     }
 
     useEffect(() => {
@@ -28,7 +52,6 @@ export default function VersesScreen() {
         })();
 
     }, [bookId, chapter]);
-
 
     useEffect(() => {
         (() => {
@@ -44,9 +67,8 @@ export default function VersesScreen() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
     return (
-        <>
+        <View style={{ flex: 1 }}>
             <ScrollView ref={scrollRef} style={styles.container}>
                 <Text style={styles.verseText}>
                     {verses.map(v => (
@@ -62,13 +84,30 @@ export default function VersesScreen() {
                     ))}
                 </Text>
             </ScrollView>
+            {/* Botões flutuantes para navegação de capítulos */}
+            <View style={styles.fabContainer} pointerEvents="box-none">
+                <TouchableOpacity
+                    style={[styles.fab, { left: 24, right: undefined, display: chapter <= 1 ? 'none' : 'flex' }]}
+                    onPress={() => navigateBetweenChapters("previous")}
+                    disabled={chapter <= 1}
+                >
+                    <CircleArrowLeft size={20} color={THEME.COLORS.WHITE} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.fab, { right: 24, left: undefined, display: chapter >= numberOfChapters ? 'none' : 'flex' }]}
+                    onPress={() => navigateBetweenChapters("next")}
+                >
+                    <CircleArrowRight size={20} color={THEME.COLORS.WHITE} />
+                </TouchableOpacity>
+            </View>
             <DialogSaveFavorites
                 visible={!!selectedVerse}
                 hideDialog={() => setSelectedVerse(null)}
                 verse={selectedVerse}
                 bookName={bookName}
             />
-        </>
+        </View>
     );
 }
 
@@ -87,20 +126,27 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 12,
     },
+    fabContainer: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 60,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        pointerEvents: 'box-none',
+    },
     fab: {
         alignItems: 'center',
-        backgroundColor: THEME.COLORS.SUCCESS,
+        backgroundColor: THEME.COLORS.BLACK,
         borderRadius: 32,
-        bottom: 32,
         elevation: 6,
-        height: 45,
+        height: 36,
         justifyContent: 'center',
         position: 'absolute',
-        right: 24,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        width: 45,
+        width: 36,
     },
 });

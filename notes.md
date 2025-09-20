@@ -6,4 +6,4 @@
 [X] Implementar lógica de "continuar lendo"
 [X] Incluir feedback ao salvor favorito
 [ ] Configurar tela de configurações - Tamanho da fonte - Tipo de quebra de texto
-[ ] Incluir botão para passar de página nos versos
+[X] Incluir botão para passar de página nos versos
