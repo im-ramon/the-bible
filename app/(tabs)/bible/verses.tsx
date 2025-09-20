@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 
 import DialogSaveFavorites from '@/components/DialogSaveFavorites';
+import { useFontSettingsContext } from '@/hooks/FontSettingsContext';
 import { getVerses } from '@/services/db';
 import { THEME } from '@/styles/styles';
 import { Verse } from '@/types/types';
@@ -12,6 +13,8 @@ import { Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } fro
 import { Button, Dialog, Portal, TextInput } from 'react-native-paper';
 
 export default function VersesScreen() {
+    const { fontSettings } = useFontSettingsContext();
+    
     const scrollRef = useRef<ScrollView>(null);
     const [verses, setVerses] = useState<Verse[]>([]);
     const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
@@ -80,7 +83,11 @@ export default function VersesScreen() {
                     {verses.map(v => (
                         <Text
                             key={v.id}
-                            style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
+                            style={{
+                                backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent',
+                                fontSize: fontSettings.size,
+                                fontWeight: fontSettings.weight,
+                            }}
                             onPress={() => handleClickVerse(v)}
                         >
                             <Text style={styles.verseNumber}>{v.verse} </Text>

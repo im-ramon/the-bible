@@ -5,3 +5,5 @@
 [X] Faz seta de votar dos livros voltar especificamente para tela anterior
 [X] Implementar lógica de "continuar lendo"
 [ ] Configurar tela de configurações
+[ ] Implemtar configuração de estilização da fonte
+[ ] Implementar troca de tipo de texto

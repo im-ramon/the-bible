@@ -14,7 +14,6 @@ export default function BiblePagesHeader({ props }: BiblePagesHeaderProps) {
 
     function goToBackChapters(route: Route<string>) {
         const { bookId, bookName } = route.params as { bookId: number; bookName: string };
-
         router.navigate({
             pathname: "/(tabs)/bible/chapters",
             params: {
