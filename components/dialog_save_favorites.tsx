@@ -4,6 +4,7 @@ import { saveFavoriteVerse } from '@/utils/local_storage';
 import * as React from 'react';
 import { Modal, Share, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
 
 interface DialogSaveFavoritesProps {
     visible: boolean;
@@ -25,6 +26,11 @@ export default function DialogSaveFavorites({ visible, verse, bookName, hideDial
         if (verse) {
             await saveFavoriteVerse(verse, bookName);
             hideDialog();
+            Toast.show({
+                type: 'success',
+                text1: 'Versículo salvo nos favoritos!',
+                text2: 'Você pode acessá-lo a qualquer momento na aba "Favoritos".'
+            });
         }
     };
 

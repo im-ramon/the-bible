@@ -1,5 +1,6 @@
 import { Verse } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from 'moment';
 
 export async function saveFavoriteVerse(verse: Verse, bookName?: string) {
     try {
@@ -79,18 +80,13 @@ export async function getFavoriteVerseByNumber(bookId: number, chapter: number, 
     }
 }
 
-export async function saveLastReadedVerse(bookId: number, chapter: number, verseNumber: number, bookName: string) {
+export async function saveLastReadedVerse(bookId: number, chapter: number, bookName: string) {
     try {
-        const { getVerses } = await import('@/services/db');
-        const verses: Verse[] = await getVerses(bookId, chapter);
-        const verse = verses.find(v => Number(v.verse) === Number(verseNumber));
-        if (!verse) throw new Error('Verso não encontrado');
         const lastReaded = {
-            ...verse,
             bookId,
             chapter,
-            verse: verseNumber,
             bookName,
+            dateTime: moment().format()
         };
         await AsyncStorage.setItem('last_readed', JSON.stringify(lastReaded));
     } catch (e) {
@@ -98,7 +94,7 @@ export async function saveLastReadedVerse(bookId: number, chapter: number, verse
     }
 }
 
-export async function getLastReadedVerse(): Promise<(Verse & { bookId: number, chapter: number, verse: number, bookName: string }) | null> {
+export async function getLastReadedVerse(): Promise<(Verse & { bookId: number, chapter: number, bookName: string, dateTime: string }) | null> {
     try {
         const stored = await AsyncStorage.getItem('last_readed');
         if (stored) {

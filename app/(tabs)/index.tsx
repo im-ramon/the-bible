@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Book, Bookmark, BookMarked, ChevronRight, Clock10, Search } from 'lucide-react-native';
+import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -21,7 +22,7 @@ export default function Index() {
         verse: 0,
         bookId: 0,
     });
-    const [lastReaded, setLastReaded] = useState<null | { bookName: string, bookId: number, chapter: number, verse: number, text: string }>(null);
+    const [lastReaded, setLastReaded] = useState<null | { bookName: string, bookId: number, chapter: number, dateTime: string, text: string }>(null);
 
     useEffect(() => {
         const randomVerse = daylyVerse[Math.floor(Math.random() * daylyVerse.length)];
@@ -45,7 +46,7 @@ export default function Index() {
                             bookName: data.bookName,
                             bookId: Number(data.bookId),
                             chapter: Number(data.chapter),
-                            verse: Number(data.verse),
+                            dateTime: data.dateTime,
                             text: data.text,
                         });
                     } else {
@@ -136,7 +137,6 @@ export default function Index() {
                                         bookId: lastReaded.bookId,
                                         chapter: lastReaded.chapter,
                                         bookName: lastReaded.bookName,
-                                        highlightedVerse: lastReaded.verse
                                     }
                                 });
                             }
@@ -145,11 +145,11 @@ export default function Index() {
                         <BookMarked color={THEME.COLORS.PRIMARY} size={32} />
                         <View>
                             <Text style={styles.firstMenuItemText}>
-                                {lastReaded ? lastReaded.bookName : "Nenhum marcador"}
+                                {lastReaded ? `${lastReaded.bookName}: ${lastReaded.chapter}` : "Nenhum marcador"}
                             </Text>
                             <Text style={styles.firstMenuItemSubText}>
                                 {lastReaded
-                                    ? `Capítulo ${lastReaded.chapter} - Verso ${lastReaded.verse}`
+                                    ? `Última leitura em: ${moment(lastReaded.dateTime).format("DD/MM/YYYY [às] HH:mm")}`
                                     : "Salve um marcador para continuar"}
                             </Text>
                         </View>

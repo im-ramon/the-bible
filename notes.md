@@ -4,4 +4,6 @@
 [X] Configurar favoritos
 [X] Faz seta de votar dos livros voltar especificamente para tela anterior
 [X] Implementar lógica de "continuar lendo"
-[ ] Configurar tela de configurações
+[X] Incluir feedback ao salvor favorito
+[ ] Configurar tela de configurações - Tamanho da fonte - Tipo de quebra de texto
+[ ] Incluir botão para passar de página nos versos

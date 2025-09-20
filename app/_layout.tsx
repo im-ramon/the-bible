@@ -3,12 +3,10 @@ import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import {
-    MD3LightTheme as DefaultThemeNativePaper,
-    PaperProvider
-} from 'react-native-paper';
+import { MD3LightTheme as DefaultThemeNativePaper, PaperProvider } from 'react-native-paper';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export const unstable_settings = {
     anchor: '(tabs)',
@@ -47,6 +45,7 @@ export default function RootLayout() {
                     </SafeAreaView>
                 </SafeAreaProvider>
             </PaperProvider>
+            <Toast topOffset={60} />
             <StatusBar style="auto" />
         </ThemeProvider >
     );
