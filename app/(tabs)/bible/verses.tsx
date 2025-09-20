@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export default function VersesScreen() {
     const scrollRef = useRef<ScrollView>(null);
@@ -30,7 +31,8 @@ export default function VersesScreen() {
         const newChapter = action === "next" ? Number(chapter) + 1 : Number(chapter) - 1;
 
         if (newChapter < 1 || newChapter > numberOfChapters) return;
-
+        
+        blink();
         router.navigate({
             pathname: "/(tabs)/bible/verses",
             params: {
@@ -67,8 +69,21 @@ export default function VersesScreen() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Added for animation
+    const opacity = useSharedValue(1);
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            opacity: opacity.value,
+        };
+    });
+    const blink = () => {
+        opacity.value = withTiming(0, { duration: 400 }, () => {
+            opacity.value = withTiming(1, { duration: 400 });
+        });
+    };
+
     return (
-        <View style={{ flex: 1 }}>
+        <Animated.View style={[{ flex: 1 }, animatedStyle]}>
             <ScrollView ref={scrollRef} style={styles.container}>
                 <Text style={styles.verseText}>
                     {verses.map(v => (
@@ -107,7 +122,7 @@ export default function VersesScreen() {
                 verse={selectedVerse}
                 bookName={bookName}
             />
-        </View>
+        </Animated.View>
     );
 }
 
