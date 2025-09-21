@@ -17,7 +17,8 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 export default function VersesScreen() {
     const scrollRef = useRef<ScrollView>(null);
 
-    const { fontSize } = useAppContext();
+    const { fontSize, hasBreakLine } = useAppContext();
+
 
     const [verses, setVerses] = useState<Verse[]>([]);
     const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
@@ -96,9 +97,14 @@ export default function VersesScreen() {
                             style={{ backgroundColor: highlightedVerse == v.verse ? 'yellow' : 'transparent' }}
                             onPress={() => handleClickVerse(v)}
                         >
-                            <Text style={styles.verseNumber}>{v.verse} </Text>
+                            {hasBreakLine === "1" && '\t\t\t\t'}
+                            <Text style={styles.verseNumber}>
+                                {v.verse}
+                                <Text style={{color: '#ffffff00'}}>-</Text>
+                            </Text>
                             {v.text}
                             {' '}
+                            {hasBreakLine === "1" && '\n'}
                         </Text>
                     ))}
                 </Text>

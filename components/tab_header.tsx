@@ -1,10 +1,10 @@
 import { useAppContext } from "@/contexts/app.context";
 import { THEME } from "@/styles/styles";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
-import { ALargeSmall, Bookmark, BookMarked, FileType, Home, Minus, Plus, Search, Settings } from 'lucide-react-native';
-import React from 'react';
+import { ALargeSmall, BetweenHorizontalEnd, Bookmark, BookMarked, FileType, Home, Minus, Plus, Search, Settings } from 'lucide-react-native';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
 interface TabHeaderProps {
@@ -12,9 +12,11 @@ interface TabHeaderProps {
     pageIcons?: { [key: string]: React.ReactNode };
 }
 
+
 export default function TabHeader({ props }: TabHeaderProps) {
-    const [showMenu, setShowMenu] = React.useState(false);
-    const { fontSize, setFontSize } = useAppContext();
+    const { fontSize, setFontSize, hasBreakLine, toggleHasBreakLine } = useAppContext();
+
+    const [showMenu, setShowMenu] = useState(false);
 
     const pageIcons = {
         configuration: <Settings color={THEME.COLORS.BLACK} />,
@@ -22,8 +24,7 @@ export default function TabHeader({ props }: TabHeaderProps) {
         index: <Home color={THEME.COLORS.BLACK} />,
         explore: <Search color={THEME.COLORS.BLACK} />,
         bookmarks: <Bookmark color={THEME.COLORS.BLACK} />,
-    }
-
+    };
 
     function handleChangeFontSize(value: number) {
         if (fontSize >= 10 && fontSize <= 34)
@@ -31,23 +32,9 @@ export default function TabHeader({ props }: TabHeaderProps) {
     }
 
     return (
-        <View style={{
-            height: 60,
-            backgroundColor: THEME.COLORS.BACKGROUND,
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 16,
-            borderBottomColor: THEME.COLORS.GRAY,
-            borderBottomWidth: THEME.SIZE.BORDER_WIDTH,
-            paddingLeft: 24,
-            gap: 8,
-        }}>
+        <View style={styles.headerContainer}>
             {props.route.name in pageIcons ? pageIcons[props.route.name as keyof typeof pageIcons] : null}
-            <Text style={{
-                color: THEME.COLORS.BLACK,
-                fontSize: 18,
-                fontWeight: "bold",
-            }}>
+            <Text style={styles.headerTitle}>
                 {props.options.title}
             </Text>
             <View style={styles.floatButtonArea}>
@@ -57,13 +44,10 @@ export default function TabHeader({ props }: TabHeaderProps) {
                 {showMenu && (
                     <Animated.View entering={FadeInRight} exiting={FadeOutRight} style={styles.menuArea}>
                         <View style={styles.configurationArea}>
-                            <View style={styles.configurationItem}>
-                                <View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 4 }}>
-                                    <FileType size={16} />
-                                    <Text style={styles.itemTitle}>
-                                        Tamanho da fonte
-                                    </Text>
-                                </View>
+                            <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, textAlign: 'center'}}>
+                                Configurações do texto
+                            </Text>
+                            <ConfigurationItem icon={<FileType size={16} />} title="Tamanho da fonte">
                                 <View style={styles.fontSizeControl}>
                                     <Plus
                                         onPress={() => handleChangeFontSize(1)}
@@ -79,35 +63,49 @@ export default function TabHeader({ props }: TabHeaderProps) {
                                         style={styles.fontSizeControlButtonMinus}
                                     />
                                 </View>
-                            </View>
-                            <View style={styles.configurationItem}>
-                                <Text style={styles.itemTitle}>Tipo de cor</Text>
-                                <View style={styles.fontSizeControl}>
-                                    <Plus
-                                        onPress={() => handleChangeFontSize(1)}
-                                        style={styles.fontSizeControlButtonPlus}
-                                    />
-                                    <View style={styles.fontSizeControlText}>
-                                        <Text>
-                                            {fontSize}
-                                        </Text>
-                                    </View>
-                                    <Minus
-                                        onPress={() => handleChangeFontSize(-1)}
-                                        style={styles.fontSizeControlButtonMinus}
-                                    />
-                                </View>
-                            </View>
+                            </ConfigurationItem>
+                            <ConfigurationItem icon={<BetweenHorizontalEnd size={16} />} title="Quebra de linha">
+                                <Button buttonColor={hasBreakLine === "1" ? THEME.COLORS.DANGER : THEME.COLORS.SUCCESS} onPress={toggleHasBreakLine}>
+                                    <Text style={{color: 'white'}}>{hasBreakLine === "1" ? "Desativar quebra de linha" : "Ativar quebra de linha"}</Text>
+                                </Button>
+                            </ConfigurationItem>
                         </View>
                     </Animated.View>
                 )}
             </View>
-        </View >
+        </View>
     );
 }
 
+function ConfigurationItem({ icon, title, children }: { icon?: React.ReactNode, title: string, children?: React.ReactNode }) {
+    return (
+        <View style={styles.configurationItem}>
+            <View style={styles.configurationItemHeader}>
+                {icon}
+                <Text style={styles.itemTitle}>{title}</Text>
+            </View>
+            {children}
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
+    headerContainer: {
+        height: 60,
+        backgroundColor: THEME.COLORS.BACKGROUND,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 16,
+        borderBottomColor: THEME.COLORS.GRAY,
+        borderBottomWidth: THEME.SIZE.BORDER_WIDTH,
+        paddingLeft: 24,
+        gap: 8,
+    },
+    headerTitle: {
+        color: THEME.COLORS.BLACK,
+        fontSize: 18,
+        fontWeight: "bold",
+    },
     floatButtonArea: {
         position: "absolute",
         top: 0,
@@ -141,6 +139,12 @@ const styles = StyleSheet.create({
     configurationItem: {
         gap: 8,
     },
+    configurationItemHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        paddingHorizontal: 4,
+    },
     itemTitle: {
         fontSize: 14,
         fontWeight: "bold",
@@ -173,4 +177,4 @@ const styles = StyleSheet.create({
         borderTopRightRadius: THEME.SIZE.BORDER_RADIUS,
         borderBottomRightRadius: THEME.SIZE.BORDER_RADIUS,
     }
-})
+});
