@@ -1,26 +1,27 @@
 export interface Book {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
     testament_reference_id: number;
-    chapters: [][]; 
+    abbrev: string;
+    chapters: string[][];
 }
 
 export interface Chapter {
-  chapter: number;
+    chapter: number;
 }
 
 export interface Verse {
-  id: number;
-  book_id: number;
-  chapter: number;
-  verse: number;
-  text: string;
+    id: number;
+    book_id: number;
+    chapter: number;
+    verse: number;
+    text: string;
 }
 
 export interface SearchResult {
-  book_id: number;
-  book_name: string;
-  chapter: number;
-  verse: number;
-  text: string;
+    book_id: number;
+    book_name: string;
+    chapter: number;
+    verse: number;
+    text: string;
 }
