@@ -37,7 +37,7 @@ export default function TabHeader({ props }: TabHeaderProps) {
             <Text style={styles.headerTitle}>
                 {props.options.title}
             </Text>
-            <View style={styles.floatButtonArea}>
+            <View style={{...styles.floatButtonArea, display: props.options.title === "Bíblia" ? 'flex' : 'none' }}>
                 <TouchableOpacity style={styles.floatButton} onPress={() => { setShowMenu(prev => !prev) }}>
                     <ALargeSmall color={THEME.COLORS.BLACK} size={20} />
                 </TouchableOpacity>

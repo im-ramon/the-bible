@@ -19,5 +19,6 @@ Um app da Bíblia sem anúncios ou qualquer outro fim lucrativo.
 - Gerar Apk localmente
 
     ```bash
-    cd android; ./gradlew assembleRelease
+    cd android; ./gradlew assembleRelease;
+    explorer ./app/build/outputs/apk/release
     ```
