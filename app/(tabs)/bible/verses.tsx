@@ -2,6 +2,7 @@
 
 import { bible } from '@/assets/db/ACF';
 import DialogSaveFavorites from '@/components/dialog_save_favorites';
+import { useAppContext } from '@/contexts/app.context';
 import { getVerses } from '@/services/db';
 import { THEME } from '@/styles/styles';
 import { Verse } from '@/types/types';
@@ -15,6 +16,9 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 
 export default function VersesScreen() {
     const scrollRef = useRef<ScrollView>(null);
+
+    const { fontSize } = useAppContext();
+
     const [verses, setVerses] = useState<Verse[]>([]);
     const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
 
@@ -31,7 +35,7 @@ export default function VersesScreen() {
         const newChapter = action === "next" ? Number(chapter) + 1 : Number(chapter) - 1;
 
         if (newChapter < 1 || newChapter > numberOfChapters) return;
-        
+
         blink();
         router.navigate({
             pathname: "/(tabs)/bible/verses",
@@ -85,7 +89,7 @@ export default function VersesScreen() {
     return (
         <Animated.View style={[{ flex: 1 }, animatedStyle]}>
             <ScrollView ref={scrollRef} style={styles.container}>
-                <Text style={styles.verseText}>
+                <Text style={{ ...styles.verseText, fontSize: fontSize }}>
                     {verses.map(v => (
                         <Text
                             key={v.id}

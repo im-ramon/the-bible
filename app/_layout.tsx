@@ -1,3 +1,4 @@
+import { AppProvider } from '@/contexts/app.context';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from 'expo-router';
@@ -35,18 +36,20 @@ export default function RootLayout() {
     }, []);
 
     return (
-        <ThemeProvider value={DefaultTheme}>
-            <PaperProvider theme={theme}>
-                <SafeAreaProvider>
-                    <SafeAreaView style={{ flex: 1 }}>
-                        <Stack>
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                        </Stack>
-                    </SafeAreaView>
-                </SafeAreaProvider>
-            </PaperProvider>
-            <Toast topOffset={60} />
-            <StatusBar style="auto" />
-        </ThemeProvider >
+        <AppProvider>
+            <ThemeProvider value={DefaultTheme}>
+                <PaperProvider theme={theme}>
+                    <SafeAreaProvider>
+                        <SafeAreaView style={{ flex: 1 }}>
+                            <Stack>
+                                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                            </Stack>
+                        </SafeAreaView>
+                    </SafeAreaProvider>
+                </PaperProvider>
+                <Toast topOffset={60} />
+                <StatusBar style="auto" />
+            </ThemeProvider >
+        </AppProvider>
     );
 }

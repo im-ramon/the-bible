@@ -1,0 +1,176 @@
+import { useAppContext } from "@/contexts/app.context";
+import { THEME } from "@/styles/styles";
+import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
+import { ALargeSmall, Bookmark, BookMarked, FileType, Home, Minus, Plus, Search, Settings } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
+import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
+
+interface TabHeaderProps {
+    props: BottomTabHeaderProps;
+    pageIcons?: { [key: string]: React.ReactNode };
+}
+
+export default function TabHeader({ props }: TabHeaderProps) {
+    const [showMenu, setShowMenu] = React.useState(false);
+    const { fontSize, setFontSize } = useAppContext();
+
+    const pageIcons = {
+        configuration: <Settings color={THEME.COLORS.BLACK} />,
+        bible: <BookMarked color={THEME.COLORS.BLACK} />,
+        index: <Home color={THEME.COLORS.BLACK} />,
+        explore: <Search color={THEME.COLORS.BLACK} />,
+        bookmarks: <Bookmark color={THEME.COLORS.BLACK} />,
+    }
+
+
+    function handleChangeFontSize(value: number) {
+        if (fontSize >= 10 && fontSize <= 34)
+            setFontSize(fontSize + value);
+    }
+
+    return (
+        <View style={{
+            height: 60,
+            backgroundColor: THEME.COLORS.BACKGROUND,
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 16,
+            borderBottomColor: THEME.COLORS.GRAY,
+            borderBottomWidth: THEME.SIZE.BORDER_WIDTH,
+            paddingLeft: 24,
+            gap: 8,
+        }}>
+            {props.route.name in pageIcons ? pageIcons[props.route.name as keyof typeof pageIcons] : null}
+            <Text style={{
+                color: THEME.COLORS.BLACK,
+                fontSize: 18,
+                fontWeight: "bold",
+            }}>
+                {props.options.title}
+            </Text>
+            <View style={styles.floatButtonArea}>
+                <TouchableOpacity style={styles.floatButton} onPress={() => { setShowMenu(prev => !prev) }}>
+                    <ALargeSmall color={THEME.COLORS.BLACK} size={20} />
+                </TouchableOpacity>
+                {showMenu && (
+                    <Animated.View entering={FadeInRight} exiting={FadeOutRight} style={styles.menuArea}>
+                        <View style={styles.configurationArea}>
+                            <View style={styles.configurationItem}>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 4 }}>
+                                    <FileType size={16} />
+                                    <Text style={styles.itemTitle}>
+                                        Tamanho da fonte
+                                    </Text>
+                                </View>
+                                <View style={styles.fontSizeControl}>
+                                    <Plus
+                                        onPress={() => handleChangeFontSize(1)}
+                                        style={styles.fontSizeControlButtonPlus}
+                                    />
+                                    <View style={styles.fontSizeControlText}>
+                                        <Text>
+                                            {fontSize}
+                                        </Text>
+                                    </View>
+                                    <Minus
+                                        onPress={() => handleChangeFontSize(-1)}
+                                        style={styles.fontSizeControlButtonMinus}
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.configurationItem}>
+                                <Text style={styles.itemTitle}>Tipo de cor</Text>
+                                <View style={styles.fontSizeControl}>
+                                    <Plus
+                                        onPress={() => handleChangeFontSize(1)}
+                                        style={styles.fontSizeControlButtonPlus}
+                                    />
+                                    <View style={styles.fontSizeControlText}>
+                                        <Text>
+                                            {fontSize}
+                                        </Text>
+                                    </View>
+                                    <Minus
+                                        onPress={() => handleChangeFontSize(-1)}
+                                        style={styles.fontSizeControlButtonMinus}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </Animated.View>
+                )}
+            </View>
+        </View >
+    );
+}
+
+
+const styles = StyleSheet.create({
+    floatButtonArea: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        height: "100%",
+        justifyContent: "center",
+        marginRight: 24,
+    },
+    floatButton: {
+        backgroundColor: THEME.COLORS.GRAY,
+        padding: 6,
+        borderRadius: THEME.SIZE.BORDER_RADIUS,
+    },
+    menuArea: {
+        backgroundColor: THEME.COLORS.WHITE,
+        position: "absolute",
+        top: 50,
+        right: 0,
+        padding: 12,
+        width: 260,
+        borderRadius: THEME.SIZE.BORDER_RADIUS,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    configurationArea: {
+        gap: 16,
+    },
+    configurationItem: {
+        gap: 8,
+    },
+    itemTitle: {
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    fontSizeControl: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 16,
+    },
+    fontSizeControlText: {
+        borderTopColor: THEME.COLORS.GRAY + "80",
+        borderBottomColor: THEME.COLORS.GRAY + "80",
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1,
+        paddingVertical: 4,
+    },
+    fontSizeControlButtonPlus: {
+        backgroundColor: THEME.COLORS.GRAY + "80",
+        padding: 14,
+        borderTopLeftRadius: THEME.SIZE.BORDER_RADIUS,
+        borderBottomLeftRadius: THEME.SIZE.BORDER_RADIUS,
+    },
+    fontSizeControlButtonMinus: {
+        backgroundColor: THEME.COLORS.GRAY + "80",
+        padding: 14,
+        borderTopRightRadius: THEME.SIZE.BORDER_RADIUS,
+        borderBottomRightRadius: THEME.SIZE.BORDER_RADIUS,
+    }
+})
